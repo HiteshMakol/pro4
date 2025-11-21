@@ -11,7 +11,7 @@ jobs:
             - name: get code
               run: actions/checkout@v3
             - name: install nodejs 
-              uses: action/setup-node@v3
+              uses: action/setup-nodejs@v3
               with:
                 node-version: ${{ matrix.node-version }}
             - name: install dependencies 
