@@ -1,37 +1,41 @@
 name: Reusable Deploy
-on: 
-    workflow_call:
-        inputs:
-            artifact-name:
-                required: true
-                type: string 
-                description: Name of the artifact to download
-                default: dist
-        # secrets:
-        #     some-secret:
-        #         required: true
-        outputs:
-            result:
-                description: "Result of the deployment"
-                value: ${{ jobs.deploy.outputs.result }}
+
+on:
+  workflow_call:
+    inputs:
+      artifact-name:
+        required: true
+        type: string
+        description: Name of the artifact to download
+        # default: dist   # <-- removed because required: true was set
+    # secrets:
+    #   some-secret:
+    #     required: true
+    outputs:
+      # Top-level outputs exposed to the caller can reference job outputs
+      result:
+        description: "Result of the deployment"
+        value: ${{ jobs.deploy.outputs.result }}
 
 jobs:
-    deploy:
-        outputs:
-            result:
-                description: "Result of the deployment"
-                value: ${{ steps.set-result-output.outputs.result }}
-        runs-on: ubuntu-latest
-        steps:
-            - name: Get build artifacts 
-              uses: actions/download-artifact@v4
-              with: 
-                name: ${{ inputs.artifact-name }}
-            - name: list files 
-              run: ls -la
-            - name: Output Information 
-              run: echo "HEY HI"
-            - name: set result output 
-              id: set-result-output
-              run: echo "result=deployed successfully" >> $GITHUB_OUTPUT
-    
+  deploy:
+    runs-on: ubuntu-latest
+    # job outputs must be a mapping name: expression (no description under job.outputs)
+    outputs:
+      result: ${{ steps.set-result-output.outputs.result }}
+
+    steps:
+      - name: Get build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ inputs.artifact-name }}
+
+      - name: list files
+        run: ls -la
+
+      - name: Output Information
+        run: echo "HEY HI"
+
+      - name: set result output
+        id: set-result-output
+        run: echo "result=deployed successfully" >> $GITHUB_OUTPUT
