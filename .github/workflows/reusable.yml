@@ -7,8 +7,20 @@ on:
                 type: string 
                 description: Name of the artifact to download
                 default: dist
+        # secrets:
+        #     some-secret:
+        #         required: true
+        outputs:
+            result:
+                description: "Result of the deployment"
+                value: ${{ jobs.deploy.outputs.result }}
+
 jobs:
     deploy:
+        outputs:
+            result:
+                description: "Result of the deployment"
+                value: ${{ steps.set-result-output.outputs.result }}
         runs-on: ubuntu-latest
         steps:
             - name: Get build artifacts 
@@ -19,4 +31,7 @@ jobs:
               run: ls -la
             - name: Output Information 
               run: echo "HEY HI"
+            - name: set result output 
+              id: set-result-output
+              run: echo "result=deployed successfully" >> $GITHUB_OUTPUT
     
