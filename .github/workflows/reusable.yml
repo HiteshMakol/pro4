@@ -7,7 +7,6 @@ on:
                 type: string 
                 description: Name of the artifact to download
                 default: dist
-
 jobs:
     deploy:
         runs-on: ubuntu-latest
